@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { batchRepository } from '@/repositories/batch.repository';
+import { publishBatchQueued } from '@/services/kafka';
 import type { SeriesBatch, QueuedItem, Assignment } from '@/types';
 
 interface BatchSubmission {
@@ -35,6 +36,8 @@ export async function POST(request: NextRequest) {
     };
 
     const batchId = await batchRepository.createBatch(batch);
+
+    await publishBatchQueued(batchId, directory);
 
     return NextResponse.json({
       success: true,

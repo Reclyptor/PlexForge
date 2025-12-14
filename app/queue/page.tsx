@@ -40,6 +40,20 @@ export default function QueuePage() {
     }
   };
 
+  const handleRepublish = async (batchId: string) => {
+    try {
+      const response = await fetch(`/api/batches/${batchId}/republish`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to republish batch');
+      }
+    } catch (error) {
+      console.error('Error republishing batch:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -124,7 +138,13 @@ export default function QueuePage() {
                       <td className="px-6 py-4 whitespace-nowrap text-xs font-mono text-[#666] border-r border-[#222]">
                         {batch.createdAt ? new Date(batch.createdAt).toLocaleString() : '-'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm space-x-4">
+                        <button
+                          onClick={() => batch._id && handleRepublish(batch._id.toString())}
+                          className="text-[#888] hover:text-white font-bold text-xs uppercase tracking-wider transition-colors"
+                        >
+                          Republish
+                        </button>
                         <button
                           onClick={() => batch._id && handleDeleteBatch(batch._id.toString())}
                           className="text-[#888] hover:text-white font-bold text-xs uppercase tracking-wider transition-colors"
